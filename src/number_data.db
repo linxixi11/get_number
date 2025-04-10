@@ -1,0 +1,2 @@
+{"type":"8","corp":"HT","name":"测试数据","serialNumber":"0001","router":"0","imgSrc":"https://test-tools.serta.cn/share//web/file/781968431070052511/17364147073301713//imageless/78196843107005251120250109172507371_97.jpg","remark":"备注一下","_id":"fLANG3pc2QOkLgqI","createdAt":{"$$date":1744272369971},"updatedAt":{"$$date":1744272369971}}
+{"$$indexCreated":{"fieldName":"serialNumber","unique":true,"sparse":false}}

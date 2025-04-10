@@ -1,0 +1,5 @@
+{"number":"2","name":"焊接图","_id":"gyjTgfnqs3GrP1g5","createdAt":{"$$date":1744268996727},"updatedAt":{"$$date":1744268996727}}
+{"number":8,"name":"零件图","_id":"uB2UIuetmMlTz7U8","createdAt":{"$$date":1744267169268},"updatedAt":{"$$date":1744267169268}}
+{"number":"4","name":"子装图","_id":"vBtlxCjbhNb7DrPi","createdAt":{"$$date":1744268658415},"updatedAt":{"$$date":1744268658415}}
+{"number":"6","name":"总装图","_id":"xMH5MjZUL6y6d4gJ","createdAt":{"$$date":1744268954386},"updatedAt":{"$$date":1744268954386}}
+{"$$indexCreated":{"fieldName":"number","unique":true,"sparse":false}}
