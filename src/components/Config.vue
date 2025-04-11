@@ -33,24 +33,12 @@ export default {
     handleCurrentChange(val) {
       this.currentRow = val;
     }, getNumberTypeList() {
-      fetch('/api/numberType/list', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }).then((response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json(); // 返回解析 Promise
-      })).then(data => {
-        console.log('接口返回数据:', data);
-        this.numberTypeList = data; // 在下一个 then 中处理数据
-      })
-        .catch(error => {
-          console.error('获取数据失败:', error);
-        });
-    }
+        this.$db.selectNumberTypeList(null).then((res,error)=>{
+            this.numberTypeList = res
+        }).catch((error)=>{
+          this.$message.error('数据查询失败'+error);
+        })
+      }
   }, created() {
     this.getNumberTypeList();
   }

@@ -87,29 +87,21 @@ export default {
     }
   }, methods: {
     getNumberTypeList() {
-      fetch('/api/numberType/list', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }).then((response=>{
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        this.numberTypeList = response.json()
-      }))
+      this.$db.selectNumberTypeList(null).then((res,error)=>{
+        this.numberTypeList = res
+      }).catch((error)=>{
+        this.$message.error('数据查询失败'+error);
+      })
     },
     addNumberType() {
-      fetch('/api/numberType/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.newNumberType)
-      }).then(()=>{
-        this.formDialogVisible = false
-        this.getNumberTypeList()
+      console.log(this.newNumberType)
+      this.$db.addNumberType(this.newNumberType).then((res,error)=>{
+        this.$message.success('数据添加成功');
+      }).catch((error) => {
+        this.$message.error('数据添加失败'+error);
       })
+      this.getNumberTypeList();
+      this.formDialogVisible = false;
     }, goToDataForm() {
       this.$router.push({name: 'NumberData'});
     }, goToConfig() {

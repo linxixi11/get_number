@@ -62,34 +62,20 @@ export default {
     displaySerialNumber(){
       if (this.form.serialNumber === ''){
         return '';
-      }else {
-        if(this.$router===0){
-          return `${this.form.name}${this.form.corp}${this.form.type}${this.form.serialNumber}`
-        }else{
-          return `${this.form.corp}${this.form.type}${this.form.serialNumber}${this.form.name}`
-        }
       }
+      // 修改点：使用 this.form.router 而不是 this.$router
+      return this.form.router === '0'
+        ? `${this.form.name}${this.form.corp}${this.form.type}${this.form.serialNumber}`
+        : `${this.form.corp}${this.form.type}${this.form.serialNumber}${this.form.name}`;
     }
   },
   methods: {
     getNumberTypeList() {
-      fetch('/api/numberType/list', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }).then((response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json(); // 返回解析 Promise
-      })).then(data => {
-        console.log('接口返回数据:', data);
-        this.numberTypeList = data; // 在下一个 then 中处理数据
+      this.$db.selectNumberTypeList(null).then((res,error)=>{
+        this.numberTypeList = res
+      }).catch((error)=>{
+        this.$message.error('数据查询失败'+error);
       })
-        .catch(error => {
-          console.error('获取数据失败:', error);
-        });
     }, copyCorpName() {
       navigator.clipboard.writeText(this.corpName).then(() => {
         this.$message.success('复制成功');
