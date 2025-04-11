@@ -49,18 +49,18 @@ export default {
     return {
       form: {
         type: '',
-        corp:'HT',
+        corp: 'HT',
         name: '',
         delivery: false,
         router: '0',
-        serialNumber:'',
+        serialNumber: '',
         desc: ''
       },
       numberTypeList: []
     }
-  },computed:{
-    displaySerialNumber(){
-      if (this.form.serialNumber === ''){
+  }, computed: {
+    displaySerialNumber() {
+      if (this.form.serialNumber === '') {
         return '';
       }
       // 修改点：使用 this.form.router 而不是 this.$router
@@ -71,10 +71,10 @@ export default {
   },
   methods: {
     getNumberTypeList() {
-      this.$db.selectNumberTypeList(null).then((res,error)=>{
+      this.$db.selectNumberTypeList(null).then((res, error) => {
         this.numberTypeList = res
-      }).catch((error)=>{
-        this.$message.error('数据查询失败'+error);
+      }).catch((error) => {
+        this.$message.error('数据查询失败' + error);
       })
     }, copyCorpName() {
       navigator.clipboard.writeText(this.corpName).then(() => {
@@ -85,25 +85,25 @@ export default {
     }, getSerialNumberMax() {
       fetch('/api/numberData/max?type=' + this.form.type, {})
         .then((response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json(); // 返回解析 Promise
-      })).then(data => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json(); // 返回解析 Promise
+        })).then(data => {
         console.log('接口返回数据:', data);
         this.form.serialNumber = data; // 在下一个 then 中处理数据
       })
         .catch(error => {
           console.error('获取数据失败:', error);
         });
-    },addNumberData(){
+    }, addNumberData() {
       fetch('/api/numberData/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(this.form)
-      }).then(()=>{
+      }).then(() => {
         this.$message.success('创建记录成功');
       })
     }

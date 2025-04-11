@@ -1,24 +1,25 @@
 <template>
-  <el-table
-    :data="numberTypeList"
-    highlight-current-row
-    @current-change="handleCurrentChange"
-    height="250"
-    border
-    style="width: 100%"
-    ref="singleTable"
-    @row-click="setCurrent">
-    <el-table-column
-      prop="number"
-      label="序号"
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="名称">
-    </el-table-column>
-  </el-table>
+    <el-table
+      :data="numberTypeList"
+      highlight-current-row
+      @current-change="handleCurrentChange"
+      height="100%"
+      border
+      style="width: 100%"
+      ref="singleTable"
+      @row-click="setCurrent">
+      <el-table-column
+        prop="number"
+        label="序号"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="名称">
+      </el-table-column>
+    </el-table>
 </template>
+
 
 <script>
 export default {
