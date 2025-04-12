@@ -1,11 +1,11 @@
 import Dexie from 'dexie';
 
-const db = new Dexie('number_type');
+const db = new Dexie('number');
 
 // 定义数据库版本和表结构
 db.version(1).stores({
   number_type: '++id, &number, name,created,last_updated',
-  number_data: '++id, &type, corp,name,serialNumber,router,imgSrc,remark,created,last_updated'
+  number_data: '++id, type, corp,name,[type+serialNumber],router,imgSrc,remark,created,last_updated'
 });
 
 // 添加表数据
@@ -47,11 +47,37 @@ async function updateNumberDataById(id, updatedData) {
     throw error;
   }
 }
+
+// 添加表数据
+async function addNumberData(req) {
+  const result = await db.number_data.put(req);
+  console.log("添加成功")
+  return result;
+}
+async function selectSerialNumberMax(req) {
+  console.log(req)
+  const numberData = await db.number_data.where('[type+serialNumber]')
+    .between(req.type,Dexie.maxKey).first();
+  const serialNumber = numberData ? numberData.serialNumber : 0;
+  console.log("查询到的数据是：",serialNumber);
+  return String(serialNumber +1).padStart(4,'0');
+}
+
+async function selectNumberDataList(req) {
+  const result = await db.number_data.where('type').equals(req.type).toArray(req);
+  console.log("查询到的数据是：",result);
+  return result;
+}
+
+
 export default {
   addNumberType,
   deleteNumberDataById,
   selectNumberTypeList,
-  updateNumberDataById
+  updateNumberDataById,
+  addNumberData,
+  selectNumberDataList,
+  selectSerialNumberMax
 }
 
 

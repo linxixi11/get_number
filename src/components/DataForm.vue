@@ -82,30 +82,25 @@ export default {
       }).catch((error) => {
         this.$message.error('复制失败：' + error);
       });
-    }, getSerialNumberMax() {
-      fetch('/api/numberData/max?type=' + this.form.type, {})
-        .then((response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    },async getSerialNumberMax() {
+        try {
+          let query = {
+            type : this.form.type
           }
-          return response.json(); // 返回解析 Promise
-        })).then(data => {
-        console.log('接口返回数据:', data);
-        this.form.serialNumber = data; // 在下一个 then 中处理数据
-      })
-        .catch(error => {
-          console.error('获取数据失败:', error);
-        });
-    }, addNumberData() {
-      fetch('/api/numberData/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.form)
-      }).then(() => {
-        this.$message.success('创建记录成功');
-      })
+          this.form.serialNumber = await  this.$db.selectSerialNumberMax(query);
+          await navigator.clipboard.writeText(this.displaySerialNumber);
+          // 复制到剪贴板
+          this.$message.success('序列号已生成并复制到剪贴板');
+        }catch (error){
+          this.$message.error('生成失败' + error);
+        }
+    },async onSubmit() {
+      try{
+        await this.$db.addNumberData(this.form)
+        this.$message.success('数据添加成功');
+      }catch (error){
+        this.$message.error('数据添加失败' + error);
+      }
     }
   },
   created() {
