@@ -1,9 +1,8 @@
 <template>
     <div id="table">
       <el-button type="primary" plain @click.native="openFormDialog">新增</el-button>
-      <el-button type="primary" plain >刷新</el-button>
       <el-button type="primary" plain @click.native="deleteSelected">删除</el-button>
-      <el-button type="primary" plain >修改</el-button>
+      <el-button type="primary" plain @click.native="openEditDialog">修改</el-button>
       <el-table
         :data="numberTypeList"
         highlight-current-row
@@ -60,6 +59,15 @@ export default {
     }
   }, computed: {},
   methods: {
+    openEditDialog() {
+      if (!this.currentRow) {
+        this.$message.warning('请先选择要修改的数据');
+        return;
+      }
+      this.isEdit = true;
+      this.newNumberType = {...this.currentRow};
+      this.formDialogVisible = true;
+    },
     async deleteSelected() {
       if (!this.currentRow) return;
       try {

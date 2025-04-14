@@ -44,6 +44,8 @@
   </el-form>
 </template>
 <script>
+
+import common from '@/common/common.js'
 export default {
   data() {
     return {
@@ -63,10 +65,11 @@ export default {
       if (this.form.serialNumber === '') {
         return '';
       }
+      const paddedSerialNumber = this.form.serialNumber.toString().padStart(4, '0');
       // 修改点：使用 this.form.router 而不是 this.$router
       return this.form.router === '0'
-        ? `${this.form.name}${this.form.corp}${this.form.type}${this.form.serialNumber}`
-        : `${this.form.corp}${this.form.type}${this.form.serialNumber}${this.form.name}`;
+        ? `${this.form.name}  ${this.form.type}${this.form.corp}${paddedSerialNumber}`
+        : `${this.form.type}${this.form.corp}${paddedSerialNumber}  ${this.form.name}`;
     }
   },
   methods: {
@@ -87,7 +90,11 @@ export default {
           let query = {
             type : this.form.type
           }
-          this.form.serialNumber = await  this.$db.selectSerialNumberMax(query);
+          const maxSerialNumber = await this.$db.selectSerialNumberMax(query)
+          let newSerialNumber = Number(maxSerialNumber)+1;
+          this.form.serialNumbeC.serialNumbeC. Or = newSerialNumber;
+          // 强制更新界面
+          this.$forceUpdate();
           await navigator.clipboard.writeText(this.displaySerialNumber);
           // 复制到剪贴板
           this.$message.success('序列号已生成并复制到剪贴板');

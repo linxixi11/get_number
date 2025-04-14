@@ -9,9 +9,20 @@
       ref="singleTable"
       >
       <el-table-column
+        prop="type"
+        label="类型"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="corp"
+        label="公司"
+        width="180">
+      </el-table-column>
+      <el-table-column
         prop="serialNumber"
         label="图号"
-        width="180">
+        width="180"
+        :formatter="formatSerialNumber">
       </el-table-column>
       <el-table-column
         prop="name"
@@ -45,6 +56,9 @@ export default {
   }, computed: {
   },
   methods: {
+  formatSerialNumber(row, column, cellValue) {
+    return cellValue.toString().padStart(4, '0');
+  },
     getRowDisplaySerial(row) {
       const { name, corp, type, serialNumber, router } = row;
       return router === '0'

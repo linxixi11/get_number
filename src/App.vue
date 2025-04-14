@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-        <router-view/>
+    <router-view/>
   </div>
 </template>
 
@@ -18,6 +18,15 @@ html, body, #app {
   height: 100%;
 }
 
+/* 将消息提示定位到左下角 */
+.el-message {
+  top: auto !important;
+  bottom: 20px;
+  left: 220px !IMPORTANT;
+  right: auto !important;
+  min-width: 200px; /* 可选：调整最小宽度 */
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -25,6 +34,7 @@ html, body, #app {
   text-align: center;
   color: #2c3e50;
 }
+
 router-view {
   flex: 1;
   display: flex;

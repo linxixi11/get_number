@@ -6,12 +6,15 @@ import router from './router'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import db from '@/common/DataSource.js'
+// import mysql from '@/common/mysql.js'
+
 
 
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.prototype.$db = db
+// Vue.prototype.$db = mysql
 
 
 /* eslint-disable no-new */

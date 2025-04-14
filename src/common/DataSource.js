@@ -50,17 +50,17 @@ async function updateNumberDataById(id, updatedData) {
 
 // 添加表数据
 async function addNumberData(req) {
-  const result = await db.number_data.put(req);
+  const result = await db.number_data.insert(req);
   console.log("添加成功")
   return result;
 }
 async function selectSerialNumberMax(req) {
   console.log(req)
   const numberData = await db.number_data.where('[type+serialNumber]')
-    .between(req.type,Dexie.maxKey).first();
+    .between([req.type,Dexie.minKey],[req.type,Dexie.maxKey]).reverse().first();
   const serialNumber = numberData ? numberData.serialNumber : 0;
   console.log("查询到的数据是：",serialNumber);
-  return String(serialNumber +1).padStart(4,'0');
+  return serialNumber;
 }
 
 async function selectNumberDataList(req) {
