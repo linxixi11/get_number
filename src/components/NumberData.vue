@@ -66,11 +66,8 @@ export default {
         : `${corp || ''}${type || ''}${serialNumber || ''}${name || ''}`;
     },async selectNumberDataList(){
       try{
-        let query = {
-          type:this.number,
-        }
-        console.log(query)
-        this.numberDataList = await this.$db.selectNumberDataList(query)
+        const type = this.number;
+        this.numberDataList = await this.$db.selectNumberDataList(type)
       }catch (error){
         this.$message.error('数据查询失败' + error);
       }

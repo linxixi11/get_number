@@ -71,7 +71,7 @@ export default {
     async deleteSelected() {
       if (!this.currentRow) return;
       try {
-        await this.$db.deleteNumberDataById(this.currentRow.id); // 假设id是表的主键
+        await this.$db.deleteNumberTypeById(this.currentRow.id); // 假设id是表的主键
         this.$message.success('删除成功');
         await this.getNumberTypeList(); // 刷新数据
         this.currentRow = null; // 清除选中状态

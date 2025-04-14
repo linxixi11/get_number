@@ -55,15 +55,15 @@ export default {
         name: '',
         delivery: false,
         router: '0',
-        serialNumber: '',
+        serialNumber: null,
         desc: ''
       },
       numberTypeList: []
     }
   }, computed: {
     displaySerialNumber() {
-      if (this.form.serialNumber === '') {
-        return '';
+      if (this.form.serialNumber === null) {
+        return null;
       }
       const paddedSerialNumber = this.form.serialNumber.toString().padStart(4, '0');
       // 修改点：使用 this.form.router 而不是 this.$router
@@ -87,12 +87,10 @@ export default {
       });
     },async getSerialNumberMax() {
         try {
-          let query = {
-            type : this.form.type
-          }
-          const maxSerialNumber = await this.$db.selectSerialNumberMax(query)
+          const type = this.form.type;
+          const maxSerialNumber = await this.$db.selectSerialNumberMax(type)
           let newSerialNumber = Number(maxSerialNumber)+1;
-          this.form.serialNumbeC.serialNumbeC. Or = newSerialNumber;
+          this.form.serialNumber = newSerialNumber;
           // 强制更新界面
           this.$forceUpdate();
           await navigator.clipboard.writeText(this.displaySerialNumber);

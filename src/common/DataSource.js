@@ -8,15 +8,16 @@ db.version(1).stores({
   number_data: '++id, type, corp,name,[type+serialNumber],router,imgSrc,remark,created,last_updated'
 });
 
+
 // 添加表数据
-async function addNumberType(req) {
-  const result = await db.number_type.put(req);
+async function addNumberType(data) {
+  const result = await db.number_type.put(data);
   console.log("添加成功")
   return result;
 }
 
 // 根据 id 删除数据
-async function deleteNumberDataById(id) {
+async function deleteNumberTypeById(id) {
   try {
     await db.number_type.delete(id);
     console.log(`id 为 ${id} 的数据删除成功`);
@@ -26,8 +27,8 @@ async function deleteNumberDataById(id) {
   }
 }
 
-async function selectNumberTypeList(req) {
-  const result = await db.number_type.toArray(req);
+async function selectNumberTypeList() {
+  const result = await db.number_type.toArray();
   console.log("查询到的数据是：",result);
   return result;
 }
@@ -49,22 +50,23 @@ async function updateNumberDataById(id, updatedData) {
 }
 
 // 添加表数据
-async function addNumberData(req) {
-  const result = await db.number_data.insert(req);
+async function addNumberData(data) {
+  delete data.id;
+  const result = await db.number_data.add(data);
   console.log("添加成功")
   return result;
 }
-async function selectSerialNumberMax(req) {
+async function selectSerialNumberMax(type) {
   console.log(req)
   const numberData = await db.number_data.where('[type+serialNumber]')
-    .between([req.type,Dexie.minKey],[req.type,Dexie.maxKey]).reverse().first();
+    .between([type,Dexie.minKey],[type,Dexie.maxKey]).reverse().first();
   const serialNumber = numberData ? numberData.serialNumber : 0;
   console.log("查询到的数据是：",serialNumber);
   return serialNumber;
 }
 
-async function selectNumberDataList(req) {
-  const result = await db.number_data.where('type').equals(req.type).toArray(req);
+async function selectNumberDataList(type) {
+  const result = await db.number_data.where('type').equals(type).toArray();
   console.log("查询到的数据是：",result);
   return result;
 }
@@ -72,7 +74,7 @@ async function selectNumberDataList(req) {
 
 export default {
   addNumberType,
-  deleteNumberDataById,
+  deleteNumberTypeById,
   selectNumberTypeList,
   updateNumberDataById,
   addNumberData,
