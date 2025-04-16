@@ -96,7 +96,8 @@ export default {
       }
     }, async addNumberType() {
       try {
-        await this.$db.addNumberType(this.newNumberType);
+        const response = this.$http.post('http://localhost:8080/metalPlate/save', data);
+        console.log(response)
         this.$message.success('数据添加成功');
         await this.getNumberTypeList();
       } catch (error) {
