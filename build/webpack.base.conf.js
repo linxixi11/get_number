@@ -64,6 +64,18 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        // 新增 axios 源码路径
+        include: [
+          resolve('src'),
+          resolve('test'),
+          resolve('node_modules/webpack-dev-server/client'),
+          // 关键：包含 axios 源码目录
+          path.resolve(__dirname, '../node_modules/axios/lib/')
+        ]
       }
     ]
   },

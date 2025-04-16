@@ -13,6 +13,8 @@ import axios from 'axios';
 Vue.config.productionTip = false
 Vue.prototype.$http = axios;
 Vue.use(ElementUI);
+
+
 // Vue.prototype.$db = db
 // Vue.prototype.$db = mysql
 

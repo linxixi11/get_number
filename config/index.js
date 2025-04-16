@@ -5,6 +5,7 @@
 const path = require('path')
 const devEnv = require('./dev.env')
 
+
 module.exports = {
   dev: {
     // Paths
@@ -13,7 +14,7 @@ module.exports = {
     // 代理列表, 是否开启代理通过[./dev.env.js]配置
     proxyTable: devEnv.OPEN_PROXY === false ? {} : {
       '/api': {
-        target: 'http://127.0.0.1:3000',
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/'
