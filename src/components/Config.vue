@@ -1,15 +1,20 @@
 <template>
   <div id="table">
-    <el-button type="primary" plain @click.native="openFormDialog">新增</el-button>
-    <el-button type="primary" plain @click.native="deleteSelected">删除</el-button>
-    <el-button type="primary" plain @click.native="openEditDialog">修改</el-button>
+ <!-- 新增：按钮容器 -->
+ <div class="table-header">
+      <el-button 
+        type="primary" 
+        plain 
+        @click.native="openFormDialog"
+      >新增</el-button>
+    </div>
 
 
     <el-table
       :data="numberTypeList"
       highlight-current-row
       @current-change="handleTableCurrentChange" 
-      height="100%"
+      height="calc(100% - 52px)%"
       border
       style="width: 100%"
       ref="singleTable"
@@ -23,12 +28,46 @@
         prop="name"
         label="名称">
       </el-table-column>
+      <el-table-column
+        prop="initSerialNumber"
+        label="初始值">
+      </el-table-column>
       <!-- 新增：如果需要显示创建时间，可添加此列 -->
       <el-table-column
           prop="created"
           label="创建时间"
           width="200">
         </el-table-column>
+<!-- 新增操作列，放置三个按钮 -->
+    <el-table-column label="操作" width="240">
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center; gap: 12px"> <!-- 使用flex布局统一间距 -->
+            <el-button 
+              type="primary" 
+              plain 
+              @click.native="openEditDialog(scope.row)"
+              class="mr-4"
+            >修改</el-button>
+
+            <el-popover
+              placement="top"
+              width="160"
+              v-model="scope.row.visible"
+            >
+              <p>确认删除？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>  
+                <el-button type="primary" size="mini" @click.native="deleteSelected(scope.row)">确定</el-button>
+              </div>
+              <el-button 
+                type="primary" 
+                plain 
+                slot="reference" 
+              >删除</el-button>
+            </el-popover>
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
     
     <!-- 分页组件 -->
@@ -43,12 +82,15 @@
     ></el-pagination>
 
     <el-dialog :visible.sync="formDialogVisible" title="表单填写">
-      <el-form :model="newNumberType">
-        <el-form-item label="序号">
+      <el-form :model="newNumberType" :rules="rules" ref="newNumberType">
+        <el-form-item label="序号" required prop="number">
           <el-input v-model="newNumberType.number"></el-input>
         </el-form-item>
-        <el-form-item label="名称">
+        <el-form-item label="名称" required prop="name">
           <el-input v-model="newNumberType.name"></el-input>
+        </el-form-item>
+        <el-form-item label="初始值" required prop="initSerialNumber">
+          <el-input v-model="newNumberType.initSerialNumber"></el-input>
         </el-form-item>
       </el-form>
       <span class="dialog-footer">
@@ -62,6 +104,13 @@
 <style>
 #table{
 height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.table-header {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: flex-start;
 }
 </style>
 
@@ -69,13 +118,26 @@ height: 80vh;
 export default {
 data() {
   return {
+    visible: false,
     numberTypeList: [],
     formDialogVisible: false,
     newNumberType: {
       id: null,
       number: '',
-      name: ''
+      name: '',
+      initSerialNumber:null
     },
+    rules: {
+        number: [
+          { required: true, message: '序号为必填项', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '名称为必填项', trigger: 'blur' }
+        ],
+        initSerialNumber: [
+          { required: true, message: '初始值为必填项', trigger: 'blur' }
+        ]
+      },
     currentRow: null,  // 新增：专门存储选中的行数据
     page: {
       currPage: 1,
@@ -84,39 +146,37 @@ data() {
     }
   }
 },
-methods: {
-  // 打开编辑对话框（修复：检查currentRow而非page.currPage）
-  openEditDialog() {
-    if (!this.currentRow) {
-      this.$message.warning('请先选择要修改的数据');
-      return;
-    }
-    this.newNumberType = { ...this.currentRow };
-    this.formDialogVisible = true;
-    this.save()
-  },
 
-  // 删除选中数据（修复：使用currentRow）
-  async deleteSelected() {
-    if (!this.currentRow) return;
+methods: {
+  // 打开编辑对话框
+  openEditDialog(row) {
+    this.newNumberType = { ...row }; // 直接使用传递的row数据
+    this.formDialogVisible = true;
+  },
+  // 删除选中数据
+  async deleteSelected(row) {
     try {
-      const response = await this.$http.post('/api/number/type/delete',this.currentRow)
+      const response = await this.$http.post('/api/number/type/delete',row)
       if (response && response.data.code === 0) {
         this.$message.success('删除成功');
-        this.currentRow = null;
         await this.getNumberTypeList();
       }
     } catch (error) {
       this.$message.error(`删除失败：${error.message}`);
     }
   },
-
   // 表格行选中事件（修复：更新currentRow而非page.currPage）
   handleTableCurrentChange(row) {
     this.currentRow = row; 
   },
 
   openFormDialog() {
+    this.newNumberType = {
+      id: null,
+      number: '',
+      name: ''
+    };
+    this.currentRow = null
     this.formDialogVisible = true
   },
 
@@ -125,8 +185,8 @@ methods: {
     try {
       // 构造分页参数（假设后端参数为currPage和pageSize）
       const params = {
-        currPage: this.page.currPage,
-        pageSize: this.page.size
+        page: this.page.currPage +'',
+        limit: this.page.size+''
       };
 
       const response = await this.$http.post('/api/number/type/list', params);
@@ -138,6 +198,7 @@ methods: {
         this.page.size = pageSize;
         this.page.total = totalCount;
         this.numberTypeList = list;
+        visible: false // 初始化visible属性
       }
     } catch (error) {
       this.$message.error(`数据查询失败：${error.message}`);
@@ -145,6 +206,7 @@ methods: {
   },
   async addNumberType() {
     try {
+      this.newNumberType.id = null;
       const response = await this.$http.post('/api/number/type/save', this.newNumberType);
       if (response.data && response.data.code === 0) {
         this.$message.success('数据添加成功');
@@ -156,7 +218,7 @@ methods: {
     }
   },async updateNumberType() {
     try {
-      const response = await this.$http.post('/api/number/type/update', this.currentRow);
+      const response = await this.$http.post('/api/number/type/update', this.newNumberType);
       if (response.data && response.data.code === 0) {
         this.$message.success('数据添加成功');
         this.formDialogVisible = false;
@@ -167,12 +229,16 @@ methods: {
     }
   },
   async save(){
-    console.log(this.currentRow)
-    if (this.currentRow.id === null) {
-      addNumberType()
-    }else{
-      updateNumberType()
-    }
+   // 关键：先执行表单校验
+   this.$refs.newNumberType.validate(valid => {
+        if (valid) { // 校验通过再提交
+          if (this.currentRow === null || this.currentRow.id === null) {
+            this.addNumberType();
+          } else {
+            this.updateNumberType();
+          }
+        }
+      });
   },
   // 分页尺寸变化处理（修复：使用page.size而非独立变量）
   handleSizeChange(size) {

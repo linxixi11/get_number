@@ -58,12 +58,15 @@ export default {
         DataForm: DataForm,
         NumberData: NumberData
       }[index]
-      console.log(this.pageName)
     }, async getNumberTypeList() {
-      try {
-        this.numberTypeList = await this.$db.selectNumberTypeList(null);
+        try {
+        const response = await this.$http.post('/api/number/type/list',{});
+        // 修复：使用response.data获取数据，避免未定义的data变量
+        if (response.data && response.data.code === 0) {
+          this.numberTypeList = response.data.page.list;
+        }
       } catch (error) {
-        this.$message.error('数据查询失败' + error);
+        this.$message.error(`数据查询失败：${error.message}`);
       }
     }, selectNumberData(item) {
       this.number = item.number; // 存储选中的类型ID
