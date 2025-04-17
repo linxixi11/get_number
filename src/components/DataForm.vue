@@ -92,6 +92,7 @@ export default {
         desc: '',
         imageBase64: ''  // 存储后端返回的图片URL
       },
+      showDeleteIcon: false, // 新增：初始化删除图标显示状态
       imageUrl:'',
       numberTypeList: [],
       rules: {
