@@ -36,6 +36,21 @@
           {{ getRowDisplaySerial(scope.row) }}
         </template>
       </el-table-column>
+
+      <el-table-column
+        prop="imageBase64"
+        label="图片"
+        width="180"
+      >
+        <template #default="scope">
+          <el-image
+            :src="handleBase64(scope.row.imageBase64)"
+          :preview-src-list="[handleBase64(scope.row.imageBase64)]"
+          style="width: 100%; height: 120px; object-fit: cover"
+          />
+        </template>
+      </el-table-column>
+
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <div style="display: flex; align-items: center; gap: 12px"> <!-- 使用flex布局统一间距 -->
@@ -46,13 +61,13 @@
             >
               <p>确认删除？</p>
               <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>  
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
                 <el-button type="primary" size="mini" @click.native="deleteSelected(scope.row)">确定</el-button>
               </div>
-              <el-button 
-                type="primary" 
-                plain 
-                slot="reference" 
+              <el-button
+                type="primary"
+                plain
+                slot="reference"
               >删除</el-button>
             </el-popover>
           </div>
@@ -71,7 +86,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="page.total"
     ></el-pagination>
-    
+
   </div>
 </template>
 
@@ -82,6 +97,7 @@
 </style>
 
 <script>
+
 export default {
   props: ['number'], // 接收父组件传递的 typeId
   data() {
@@ -98,6 +114,21 @@ export default {
   }, computed: {
   },
   methods: {
+    // 新增Base64处理方法
+    handleBase64(base64Str) {
+      // 空值处理
+      if (!base64Str) return '';
+
+      // 检查是否已有完整前缀
+      const base64Regex = /^data:image\/(png|jpeg|jpg|gif|webp);base64,/;
+      if (base64Regex.test(base64Str)) {
+        return base64Str;
+      }
+
+      // 自动识别图片类型（示例以png为例，可根据实际情况调整）
+      // 注意：如果后端返回的图片类型不固定，需要更精确的类型判断逻辑
+      return `data:image/png;base64,${base64Str}`;
+    },
     // 删除选中数据
   async deleteSelected(row) {
     try {
@@ -116,7 +147,7 @@ export default {
     getRowDisplaySerial(row) {
       const { name, corp, type, serialNumber, router } = row;
       const paddedSerialNumber = serialNumber.toString().padStart(4, '0');
-      
+
       return router === 0
         ? `${name}  ${type}${corp}${paddedSerialNumber}`
         : `${type}${corp}${paddedSerialNumber}  ${name}`;
